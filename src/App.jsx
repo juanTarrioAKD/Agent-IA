@@ -1,10 +1,22 @@
-import { useState } from 'react'
+import React, { useEffect } from 'react';
+import { createChat } from '@n8n/chat';
+import '@n8n/chat/style.css';
+import { useState } from 'react';
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  useEffect(() => {
+    createChat({
+      webhookUrl: 'https://juantarrio.app.n8n.cloud/webhook/b8f494fd-48bc-4b0f-8a68-3b91794cd012/chat',
+      mode: 'window',
+      initialMessages: [
+        '¡Hola! Soy tu asistente IA. ¿En qué puedo ayudarte?',
+      ],
+    });
+  }, []);
 
   return (
     <>
