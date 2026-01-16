@@ -272,8 +272,8 @@ class Media {
       }
     }
     this.scale = this.screen.height / 1500;
-    this.plane.scale.y = (this.viewport.height * (900 * this.scale)) / this.screen.height;
-    this.plane.scale.x = (this.viewport.width * (700 * this.scale)) / this.screen.width;
+    this.plane.scale.y = (this.viewport.height * (630 * this.scale)) / this.screen.height;
+    this.plane.scale.x = (this.viewport.width * (490 * this.scale)) / this.screen.width;
     this.plane.program.uniforms.uPlaneSizes.value = [this.plane.scale.x, this.plane.scale.y];
     this.padding = 2;
     this.width = this.plane.scale.x + this.padding;
@@ -296,9 +296,9 @@ class App {
       onItemClick  
     } = {}
   ) {
-    this.onClickCallback = onItemClick;
     document.documentElement.classList.remove('no-js');
     this.container = container;
+    this.onClickCallback = onItemClick; // Guardamos la función de click
     this.scrollSpeed = scrollSpeed;
     this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
     this.onCheckDebounce = debounce(this.onCheck, 200);
@@ -335,7 +335,7 @@ class App {
       widthSegments: 100
     });
   }
-  createMedias(items, bend = 1, textColor, borderRadius, font) {
+  createMedias(items, bend = 0, textColor, borderRadius, font) {
     const defaultItems = [
       { id: 1, image: `https://picsum.photos/seed/1/800/600?grayscale`, text: 'Bridge' },
       { id: 2, image: `https://picsum.photos/seed/2/800/600?grayscale`, text: 'Desk Setup' },
@@ -371,49 +371,75 @@ class App {
       });
     });
   }
-  onTouchDown(e) {
-    this.isDown = true;
-    this.scroll.position = this.scroll.current;
-    this.start = e.touches ? e.touches[0].clientX : e.clientX;
-    this.clickStartX = this.start;
-    this.clickStartTime = Date.now();
-  }
   onTouchMove(e) {
     if (!this.isDown) return;
     const x = e.touches ? e.touches[0].clientX : e.clientX;
     const distance = (this.start - x) * (this.scrollSpeed * 0.025);
     this.scroll.target = this.scroll.position + distance;
   }
+  onTouchDown(e) {
+    this.isDown = true;
+    this.scroll.position = this.scroll.current;
+    this.start = e.touches ? e.touches[0].clientX : e.clientX;
+    // Guardamos datos para diferenciar Click vs Arrastre
+    this.clickStartX = this.start;
+    this.clickStartY = e.touches ? e.touches[0].clientY : e.clientY;
+    this.clickStartTime = Date.now();
+  }
   onTouchUp(e) {
-    this.isDown = false; 
-    // DETECCIÓN DE CLIC
-    // Si el usuario soltó el mouse rápido (< 200ms) y movió poco el mouse (< 5px)
+    this.isDown = false;
+    
+    // Detección de Clic
     const x = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+    const y = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+    
     const timeDiff = Date.now() - this.clickStartTime;
-    const distDiff = Math.abs(x - this.clickStartX);
-    if (timeDiff < 200 && distDiff < 10) {
-       this.handleItemClick();
+    const distDiffX = Math.abs(x - this.clickStartX);
+    const distDiffY = Math.abs(y - this.clickStartY);
+
+    // Si el clic fue rápido (< 300ms) y el mouse no se movió mucho (< 10px)
+    if (timeDiff < 300 && distDiffX < 10 && distDiffY < 10) {
+       this.handleItemClick(x); 
     }
+    
     this.onCheck();
   }
-  handleItemClick() {
-    if (!this.medias || !this.medias[0]) return; 
-    // Calculamos el índice del item central basado en el scroll actual
+  handleItemClick(mouseX) {
+    if (!this.medias || !this.medias[0]) return;
+
+    // 1. ZONA SEGURA (CENTRO DE PANTALLA)
+    // Calculamos cuánto mide visualmente la carta en píxeles.
+    // La fórmula '490 * scale' viene de la lógica original de Media.onResize
+    const scale = this.screen.height / 1500;
+    const visualCardWidth = 490 * scale; 
+    const screenCenter = this.screen.width / 2;
+    
+    // Definimos la zona activa (solo el ancho de la carta central)
+    const safeZoneHalf = visualCardWidth * 0.55; // 0.55 para dar un poquito de margen extra
+    
+    // Si el click está LEJOS del centro, cancelamos.
+    if (Math.abs(mouseX - screenCenter) > safeZoneHalf) {
+      return; 
+    }
+
+    // 2. CALCULAR QUÉ ITEM ES
     const width = this.medias[0].width;
     const rawIndex = Math.round(Math.abs(this.scroll.target) / width);
-    // Usamos modulo (%) para manejar el array infinito
     const realIndex = rawIndex % this.mediasImages.length;
-    // Obtenemos los datos del item seleccionado
     const selectedItem = this.mediasImages[realIndex];
-    // Si pasaste una función onClick desde React, la ejecutamos
+
+    // 3. EJECUTAR CALLBACK
     if (this.onClickCallback) {
       this.onClickCallback(selectedItem);
     }
   }
   onWheel(e) {
+    // Hemos comentado la lógica de la rueda para permitir scroll de página
+    /*
     const delta = e.deltaY || e.wheelDelta || e.detail;
     this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2;
     this.onCheckDebounce();
+    */
   }
   onCheck() {
     if (!this.medias || !this.medias[0]) return;
@@ -451,15 +477,15 @@ class App {
   }
   addEventListeners() {
     this.boundOnResize = this.onResize.bind(this);
-    this.boundOnWheel = this.onWheel.bind(this);
+    // this.boundOnWheel = this.onWheel.bind(this); // COMENTADO PARA NO BLOQUEAR SCROLL DE PAGINA
     this.boundOnTouchDown = this.onTouchDown.bind(this);
     this.boundOnTouchMove = this.onTouchMove.bind(this);
     this.boundOnTouchUp = this.onTouchUp.bind(this);
+
     window.addEventListener('resize', this.boundOnResize);
-    //Inicio de comentarios para el scroll con el mouse
-    //window.addEventListener('wheel', this.boundOnWheel);
-    //window.addEventListener('mousedown', this.boundOnTouchDown);
-    //Fin de comentarios para el scroll con el mouse
+    // window.addEventListener('mousewheel', this.boundOnWheel);
+    // window.addEventListener('wheel', this.boundOnWheel);
+    window.addEventListener('mousedown', this.boundOnTouchDown);
     window.addEventListener('mousemove', this.boundOnTouchMove);
     window.addEventListener('mouseup', this.boundOnTouchUp);
     window.addEventListener('touchstart', this.boundOnTouchDown);
@@ -469,14 +495,15 @@ class App {
   destroy() {
     window.cancelAnimationFrame(this.raf);
     window.removeEventListener('resize', this.boundOnResize);
-    window.removeEventListener('mousewheel', this.boundOnWheel);
-    window.removeEventListener('wheel', this.boundOnWheel);
+    // window.removeEventListener('mousewheel', this.boundOnWheel);
+    // window.removeEventListener('wheel', this.boundOnWheel);
     window.removeEventListener('mousedown', this.boundOnTouchDown);
     window.removeEventListener('mousemove', this.boundOnTouchMove);
     window.removeEventListener('mouseup', this.boundOnTouchUp);
     window.removeEventListener('touchstart', this.boundOnTouchDown);
     window.removeEventListener('touchmove', this.boundOnTouchMove);
     window.removeEventListener('touchend', this.boundOnTouchUp);
+    
     if (this.renderer && this.renderer.gl && this.renderer.gl.canvas.parentNode) {
       this.renderer.gl.canvas.parentNode.removeChild(this.renderer.gl.canvas);
     }
@@ -485,7 +512,7 @@ class App {
 
 export default function CircularGallery({
   items,
-  bend = 3,
+  bend = 0,
   textColor = '#ffffff',
   borderRadius = 0.05,
   font = 'bold 30px Figtree',

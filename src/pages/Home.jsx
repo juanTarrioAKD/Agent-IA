@@ -1,74 +1,84 @@
-
 import React, { useEffect } from 'react';
 import { createChat } from '@n8n/chat';
 import '@n8n/chat/style.css';
-import { useState } from 'react';
-import CircularGallery from '../components/circular_galerry'; 
 import Header from '../components/header';
 import Footer from '../components/footer';
-
-const misPublicaciones = [
-  { id: 1, text: 'Proyecto React', image: 'https://picsum.photos/id/10/600/600' },
-  { id: 2, text: 'Diseño UX', image: 'https://picsum.photos/id/20/600/600' },
-  { id: 3, text: 'Inteligencia Art', image: 'https://picsum.photos/id/30/600/600' },
-  { id: 4, text: 'Fotografía', image: 'https://picsum.photos/id/40/600/600' },
-];
+import LiquidChrome from '../components/background';
+import TextPressure from '../components/text_pressure';
+import fotoStore from '../assets/Store_Example.jpg';
 
 const demoItems = [
-    { link: '#', text: 'Mojave', image: 'https://picsum.photos/600/400?random=1' },
-    { link: '#', text: 'Sonoma', image: 'https://picsum.photos/600/400?random=2' },
-    { link: '#', text: 'Monterey', image: 'https://picsum.photos/600/400?random=3' },
-    { link: '#', text: 'Sequoia', image: 'https://picsum.photos/600/400?random=4' }
-  ];
+  { link: '/store', text: 'Store Example', image: fotoStore },
+  { link: '#', text: 'Sonoma', image: 'https://picsum.photos/600/400?random=2' },
+  { link: '#', text: 'Monterey', image: 'https://picsum.photos/600/400?random=3' },
+  { link: '#', text: 'Sequoia', image: 'https://picsum.photos/600/400?random=4' }
+];
 
 const Home = () => {
-    useEffect(() => {
-        createChat({
-          webhookUrl: 'https://juantarrio.app.n8n.cloud/webhook/b8f494fd-48bc-4b0f-8a68-3b91794cd012/chat',
-          mode: 'window',
-          initialMessages: [
-            '¡Hola! Soy tu asistente IA. ¿En qué puedo ayudarte?',
-          ],
-        });
-    }, []);
+  useEffect(() => {
+    createChat({
+      webhookUrl: 'https://juantarrio.app.n8n.cloud/webhook/b8f494fd-48bc-4b0f-8a68-3b91794cd012/chat',
+      mode: 'window',
+      initialMessages: [
+        '¡Hola! Soy tu asistente IA. ¿En qué puedo ayudarte?',
+      ],
+    });
+  }, []);
 
   return (
-        <div style={{ 
-          width: '100%',
-          backgroundColor: '#000',
-        }}>
-          
-        {/* seccion HERO */}
-        {/* Este div agrupa Header + Carrusel y forzamos que mida 100vh (toda la pantalla) */}
-        <div style={{ 
+    <div style={{ 
+      width: '100%',
+      backgroundColor: '#000',
+    }}>
+      {/* seccion HERO */}
+      <div style={{ 
         height: '100vh', 
         display: 'flex', 
         flexDirection: 'column',
         position: 'relative'
+      }}>
+        {/* FONDO */}
+        <div style={{ 
+          position: 'absolute', 
+          top: 0, 
+          left: 0, 
+          width: '100%', 
+          height: '100%', 
+          zIndex: 0,
+          pointerEvents: 'none'
         }}>
-          {/* 1. HEADER (Arriba) */}
-          <Header />
-    
-          {/* 2. ZONA DEL CARRUSEL (Medio) */}
-          {/* flex: 1 hace que este div crezca para ocupar TODO el espacio libre disponible */}
-          <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-            <CircularGallery 
-              items={misPublicaciones} 
-              bend={3} 
-              textColor="#ffffff" 
-              borderRadius={0.05} 
-            />
-          </div>
-          
+          <LiquidChrome
+            baseColor={[0, 0.2, 0.2]}
+            speed={0.28}
+            amplitude={0.3}
+            interactive={false}
+          />
         </div>
 
-        {/* 3. FOOTER (DEBAJO DEL PLIEGUE) */}
-      {/* Al estar fuera del div '100vh', aparecerá solo cuando hagas scroll hacia abajo */}
+        {/* 1. HEADER (Arriba) */}
+        <div style={{ position: 'relative', zIndex: 10}}>
+          <Header />
+        </div>
+
+        {/* 2. ZONA PARA NUEVO COMPONENTE (Medio) */}
+        <div style={{ flex: 1, position: 'relative', overflow: 'hidden', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ position: 'relative', height: '300px', width: '100%' }}>
+            <TextPressure
+              text="LA GUARDIA IMPERIAL"
+              textColor="#FFFFFF"
+              strokeColor="#FFFFFF"
+              stroke={true}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 3. FOOTER (DEBAJO DEL PLIEGUE) */}
       <div style={{ flexShrink: 0, minHeight: '100vh' }}>
         <Footer items={demoItems} />
       </div>
     </div>
-      );
+  );
 };
 
 export default Home;
