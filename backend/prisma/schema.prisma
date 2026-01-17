@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+//APARTADO DE LOS ROLES Y PERMISOS
+
+model Rol {
+  id          Int       @id @default(autoincrement())
+  rol         String    @unique
+
+  // Relacion: 1 rol tiene muchos permisos
+  permissions Permission[] @relation("RolPermission")
+  
+  // Relacion inversa: muchos usuarios tienen este rol
+  users       User[] @relation("UserRol")
+}
+
+model Permission {
+  id          Int       @id @default(autoincrement())
+  permission  String    @unique
+
+  // Relacion: 1 permiso tiene muchos roles
+  roles       Rol[] @relation("RolPermission")
+}
+
+//APARTADO DE LOS USUARIOS
+model User {
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  nombre      String
+  apellido    String
+  nameUser    String?
+  password    String
+  createdAt   DateTime  @default(now())
+  rolId       Int
+
+  // Relacion: 1 usuario tiene muchas publciaciones.
+  posts       Post[]
+
+  // Relacion: 1 usuario tiene 1 rol.
+  rol         Rol       @relation(fields: [rolId], references: [id], name: "UserRol")
+}
+
+//APARTADO DE LAS PUBLICACIONES
+model Post {
+  id          Int       @id @default(autoincrement())
+  title       String
+  libroId     Int
+  createdAt   DateTime  @default(now())
+  userId      Int
+
+  // Relacion: 1 publicacion tiene 1 usuario.
+  user        User      @relation(fields: [userId], references: [id])
+  // Relacion: 1 publicacion tiene 1 libro.
+  libro       Libro     @relation(fields: [libroId], references: [id])
+}
+
+model Libro {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  image       String?
+  price       Float?
+  stock       Int?
+  createdAt   DateTime  @default(now())
+
+  // Relacion inversa: un libro puede tener muchas publicaciones (requerido por Prisma)
+  posts       Post[]
+}
