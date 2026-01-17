@@ -3,15 +3,15 @@ import { createChat } from '@n8n/chat';
 import '@n8n/chat/style.css';
 import Header from '../components/header';
 import Footer from '../components/footer';
-import LiquidChrome from '../components/background';
+import LiquidChrome from '../components/background_home';
 import TextPressure from '../components/text_pressure';
 import fotoStore from '../assets/Store_Example.jpg';
 
 const demoItems = [
   { link: '/store', text: 'Store Example', image: fotoStore },
-  { link: '#', text: 'Sonoma', image: 'https://picsum.photos/600/400?random=2' },
-  { link: '#', text: 'Monterey', image: 'https://picsum.photos/600/400?random=3' },
-  { link: '#', text: 'Sequoia', image: 'https://picsum.photos/600/400?random=4' }
+  { link: '#', text: 'Proximamente!', image: 'https://picsum.photos/600/400?random=2' },
+  { link: '#', text: 'Proximamente!', image: 'https://picsum.photos/600/400?random=3' },
+  { link: '/about', text: 'About Page', image: 'https://picsum.photos/600/400?random=4' }
 ];
 
 const Home = () => {

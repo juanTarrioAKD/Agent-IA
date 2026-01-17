@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { Renderer, Program, Mesh, Triangle } from 'ogl';
 
-import '../compCSS/background.css';
+import '../compCSS/background_home.css';
 
 export const LiquidChrome = ({
   baseColor = [0.1, 0.1, 0.1],
