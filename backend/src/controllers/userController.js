@@ -21,14 +21,13 @@ export const create = async (req, res, next) => {
       });
     }
 
-    if (error.message === 'ROL_NOT_FOUND') {
-      return res.status(404).json({ 
+    if (error.message === 'DEFAULT_ROL_NOT_CONFIGURED') {
+      return res.status(500).json({ 
         success: false, 
-        message: "El rol especificado no existe" 
+        message: "No hay un rol por defecto configurado en el sistema. Contacte al administrador." 
       });
     }
 
-    // Si es otro error, lo pasamos al middleware global de errores
     next(error);
   }
 };

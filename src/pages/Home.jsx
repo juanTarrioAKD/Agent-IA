@@ -7,6 +7,8 @@ import LiquidChrome from '../components/background_home';
 import TextPressure from '../components/text_pressure';
 import fotoStore from '../assets/Store_Example.jpg';
 
+let n8nChatInitialized = false;
+
 const demoItems = [
   { link: '/store', text: 'Store Example', image: fotoStore },
   { link: '#', text: 'Proximamente!', image: 'https://picsum.photos/600/400?random=2' },
@@ -16,6 +18,8 @@ const demoItems = [
 
 const Home = () => {
   useEffect(() => {
+    if (n8nChatInitialized) return;
+    n8nChatInitialized = true;
     createChat({
       webhookUrl: 'https://juantarrio.app.n8n.cloud/webhook/b8f494fd-48bc-4b0f-8a68-3b91794cd012/chat',
       mode: 'window',

@@ -1,8 +1,8 @@
-require("dotenv").config();
-
-const { PrismaClient } = require("./src/generated/prisma/client");
-const { PrismaPg } = require("@prisma/adapter-pg");
-const { Pool } = require("pg");
+import "dotenv/config";
+import { PrismaClient } from "./src/generated/prisma/client.js";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
+import app from "./src/app.js";
 
 // Verificar que DATABASE_URL esté cargada
 if (!process.env.DATABASE_URL) {
@@ -17,8 +17,6 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 
 const prisma = new PrismaClient({ adapter });
-
-const app = require("./src/app");
 
 const PORT = process.env.PORT || 3000;
 

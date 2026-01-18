@@ -18,11 +18,5 @@ export const createUserSchema = z.object({
   
   password: z
     .string({ required_error: "La contraseña es requerida" })
-    .min(6, "La contraseña debe tener al menos 6 caracteres"),
-    
-  // Validamos que el rolId sea un número positivo
-  rolId: z
-    .number({ required_error: "El rol es requerido" })
-    .int()
-    .positive()
+    .min(6, "La contraseña debe tener al menos 6 caracteres")
 });

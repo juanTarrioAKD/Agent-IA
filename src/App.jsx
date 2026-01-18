@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // Importa tus páginas
 import Home from './pages/home';         
 import AboutPage from './pages/AboutPage';
+import AuthPage from './pages/AuthPage';
 import PostDetail from './pages/post_detail';
 import Store from './pages/Store';
 
@@ -21,7 +22,10 @@ function App() {
         {/* RUTA 3: About Page */}
         <Route path="/about" element={<AboutPage />} />
 
-        {/* RUTA 4: El detalle (La Tilted Card) */}
+        {/* RUTA 4: Auth (Login/Registro) */}
+        <Route path="/auth" element={<AuthPage />} />
+
+        {/* RUTA 5: El detalle (La Tilted Card) */}
         {/* :id es un comodín, aceptará cualquier número */}
         <Route path="/post/:id" element={<PostDetail />} />
       </Routes>

@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 // use your own icon import if react-icons is not available
 import { GoArrowUpRight } from 'react-icons/go';
@@ -61,7 +62,8 @@ const Header = ({
     if (!navEl) return null;
 
     gsap.set(navEl, { height: 60, overflow: 'hidden' });
-    gsap.set(cardsRef.current, { y: 50, opacity: 0 });
+    const cards = (cardsRef.current || []).filter(Boolean);
+    if (cards.length) gsap.set(cards, { y: 50, opacity: 0 });
 
     const tl = gsap.timeline({ paused: true });
 
@@ -71,7 +73,7 @@ const Header = ({
       ease
     });
 
-    tl.to(cardsRef.current, { y: 0, opacity: 1, duration: 0.4, ease, stagger: 0.08 }, '-=0.1');
+    if (cards.length) tl.to(cards, { y: 0, opacity: 1, duration: 0.4, ease, stagger: 0.08 }, '-=0.1');
 
     return tl;
   };
@@ -153,13 +155,13 @@ const Header = ({
             <img src={logo} alt={logoAlt} className="logo" />
           </div>
 
-          <button
-            type="button"
+          <Link
+            to="/auth"
             className="card-nav-cta-button"
-            style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
+            style={{ backgroundColor: buttonBgColor, color: buttonTextColor, textDecoration: 'none' }}
           >
-            Get Started
-          </button>
+            Log In
+          </Link>
         </div>
 
         <div className="card-nav-content" aria-hidden={!isExpanded}>

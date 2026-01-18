@@ -2,7 +2,7 @@ import prisma from '../lib/prisma.js'; // Ajusta la ruta a tu instancia singleto
 import bcrypt from 'bcryptjs';
 
 export const createUser = async (userData) => {
-  const { email, password, rolId, ...rest } = userData;
+  const { email, password, ...rest } = userData;
 
   // 1. Verificar si el usuario ya existe
   const existingUser = await prisma.user.findUnique({
@@ -10,18 +10,19 @@ export const createUser = async (userData) => {
   });
 
   if (existingUser) {
-    // Lanzamos un error controlado para que el controlador lo capture
     throw new Error('EMAIL_EXISTS');
   }
 
-  // 2. Verificar si el Rol existe (Buena práctica de integridad)
-  const existingRol = await prisma.rol.findUnique({
-    where: { id: rolId }
-  });
+  // 2. Asignar rol por defecto (el frontend no envía rol; se maneja en el servicio)
+  const defaultRol = await prisma.rol.findFirst({
+    where: { rol: { in: ['Usuario', 'usuario', 'User', 'user'] } }
+  }) || await prisma.rol.findFirst();
 
-  if (!existingRol) {
-    throw new Error('ROL_NOT_FOUND');
+  if (!defaultRol) {
+    throw new Error('DEFAULT_ROL_NOT_CONFIGURED');
   }
+
+  const rolId = defaultRol.id;
 
   // 3. Encriptar la contraseña (Hash)
   const salt = await bcrypt.genSalt(10);
@@ -31,7 +32,7 @@ export const createUser = async (userData) => {
   const newUser = await prisma.user.create({
     data: {
       email,
-      password: passwordHash, // Guardamos el hash, no el texto plano
+      password: passwordHash,
       rolId,
       ...rest, // nombre, apellido, nameUser
     },
