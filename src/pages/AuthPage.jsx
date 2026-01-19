@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
+import showAlerts from '../utils/alerts';
+import { FaFacebookF, FaGoogle, FaLinkedinIn } from 'react-icons/fa';
+import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
 import '../compCSS/AuthPage.css';
 
 const AuthPage = () => {
+  const navigate = useNavigate();
   const { login, register } = useAuth();
   const [isRegisterActive, setIsRegisterActive] = useState(false);
 
@@ -31,11 +36,11 @@ const AuthPage = () => {
     const result = await register(dataToSend);
 
     if (result.success) {
-      alert("Registro exitoso! Ahora inicia sesión.");
+      showAlerts.success('Registro exitoso', 'Ahora inicia sesión.');
       setIsRegisterActive(false);
       setFormData(prev => ({ ...prev, password: '' }));
     } else {
-      alert("Error: " + result.message);
+      showAlerts.error('Error', result.message);
     }
   };
 
@@ -45,9 +50,10 @@ const AuthPage = () => {
     const result = await login(formData.email, formData.password);
 
     if (result.success) {
-      alert("¡Login correcto!");
+      showAlerts.toast('¡Login correcto!', 'success');
+      navigate('/store');
     } else {
-      alert("Error: " + result.message);
+      showAlerts.error('Error', result.message);
     }
   };
 
@@ -97,9 +103,9 @@ const AuthPage = () => {
 
             <span>or use your account</span>
             <div className="social-container">
-              <a href="#" className="social"><i className="lni lni-facebook-fill"></i></a>
-              <a href="#" className="social"><i className="lni lni-google"></i></a>
-              <a href="#" className="social"><i className="lni lni-linkedin-original"></i></a>
+              <a href="#" className="social" aria-label="Facebook"><FaFacebookF /></a>
+              <a href="#" className="social" aria-label="Google"><FaGoogle /></a>
+              <a href="#" className="social" aria-label="LinkedIn"><FaLinkedinIn /></a>
             </div>
           </form>
         </div>
@@ -136,9 +142,9 @@ const AuthPage = () => {
             <button type="submit">Login</button>
             <span>or use your account</span>
             <div className="social-container">
-              <a href="#" className="social"><i className="lni lni-facebook-fill"></i></a>
-              <a href="#" className="social"><i className="lni lni-google"></i></a>
-              <a href="#" className="social"><i className="lni lni-linkedin-original"></i></a>
+              <a href="#" className="social" aria-label="Facebook"><FaFacebookF /></a>
+              <a href="#" className="social" aria-label="Google"><FaGoogle /></a>
+              <a href="#" className="social" aria-label="LinkedIn"><FaLinkedinIn /></a>
             </div>
           </form>
         </div>
@@ -151,7 +157,7 @@ const AuthPage = () => {
               <h1 className="title">Welcome <br /> Back!</h1>
               <p>To keep connected with us please login with your personal info</p>
               <button className="ghost" id="login" onClick={() => setIsRegisterActive(false)}>
-                <i className="lni lni-arrow-left login"></i> Login
+                <IoArrowBack className="login" aria-hidden /> Login
               </button>
             </div>
 
@@ -159,7 +165,7 @@ const AuthPage = () => {
               <h1 className="title">Hello, <br /> Friend!</h1>
               <p>Enter your personal details and start your journey with us</p>
               <button className="ghost" id="register" onClick={() => setIsRegisterActive(true)}>
-                Register <i className="lni lni-arrow-right register"></i>
+                Register <IoArrowForward className="register" aria-hidden />
               </button>
             </div>
 

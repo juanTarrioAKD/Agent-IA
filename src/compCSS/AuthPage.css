@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins');
 
+.background-image {
+    background-image: url('../assets/BarcoAgua.gif');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -14,6 +21,7 @@
     padding: 20px;
     box-sizing: border-box;
     font-family: "Poppins", sans-serif;
+    color: #1d1a1a;
 }
 
 .auth-page-wrapper h1 {
@@ -116,26 +124,27 @@
     color: #fff;
 }
 
-.auth-page-wrapper button.ghost i {
+.auth-page-wrapper button.ghost .login,
+.auth-page-wrapper button.ghost .register {
     position: absolute;
     opacity: 0;
     transition: 0.3s ease-in-out;
 }
 
-.auth-page-wrapper button.ghost i.register {
+.auth-page-wrapper button.ghost .register {
     right: 70px;
 }
 
-.auth-page-wrapper button.ghost i.login {
+.auth-page-wrapper button.ghost .login {
     left: 70px;
 }
 
-.auth-page-wrapper button.ghost:hover i.register {
+.auth-page-wrapper button.ghost:hover .register {
     right: 40px;
     opacity: 1;
 }
 
-.auth-page-wrapper button.ghost:hover i.login {
+.auth-page-wrapper button.ghost:hover .login {
     left: 40px;
     opacity: 1;
 }
@@ -230,7 +239,7 @@
 }
 
 .overlay {
-    background-image: url('https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+    background-image: url('../assets/BarcoAgua.gif');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
