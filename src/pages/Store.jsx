@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAuth } from '../context/authContext';
 import CircularGallery from '../components/circular_galerry'; 
 import Header from '../components/header';
 import Footer from '../components/footer';
@@ -18,6 +19,8 @@ const misPublicaciones = [
 
 
 const Store = () => {
+  const { user } = useAuth()
+
   return (
     <div style={{ 
       width: '100%',

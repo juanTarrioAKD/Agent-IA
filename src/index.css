@@ -68,6 +68,18 @@ input, textarea, select {
   color: #141212;
 }
 
+/* Cuando SweetAlert está activo, desactivamos la interacción
+   en el contenedor principal de tu aplicación */
+body.swal2-shown #root {
+  pointer-events: none;
+}
+
+/* Aseguramos que el modal SÍ reciba clics
+   (aunque SweetAlert suele manejar esto por su cuenta) */
+.swal2-container {
+  pointer-events: auto;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

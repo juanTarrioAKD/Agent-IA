@@ -399,28 +399,26 @@ class App {
 
     // Si el clic fue rápido (< 300ms) y el mouse no se movió mucho (< 10px)
     if (timeDiff < 300 && distDiffX < 10 && distDiffY < 10) {
-       this.handleItemClick(x); 
+       this.handleItemClick(x, y);
     }
     
     this.onCheck();
   }
-  handleItemClick(mouseX) {
+  handleItemClick(mouseX, mouseY) {
     if (!this.medias || !this.medias[0]) return;
 
-    // 1. ZONA SEGURA (CENTRO DE PANTALLA)
-    // Calculamos cuánto mide visualmente la carta en píxeles.
-    // La fórmula '490 * scale' viene de la lógica original de Media.onResize
     const scale = this.screen.height / 1500;
-    const visualCardWidth = 490 * scale; 
-    const screenCenter = this.screen.width / 2;
-    
-    // Definimos la zona activa (solo el ancho de la carta central)
-    const safeZoneHalf = visualCardWidth * 0.55; // 0.55 para dar un poquito de margen extra
-    
-    // Si el click está LEJOS del centro, cancelamos.
-    if (Math.abs(mouseX - screenCenter) > safeZoneHalf) {
-      return; 
-    }
+    const visualCardWidth = 490 * scale;
+    const visualCardHeight = 630 * scale;
+
+    const screenCenterX = this.screen.width / 2;
+    const screenCenterY = this.screen.height / 2;
+
+    const limitX = visualCardWidth * 0.5;
+    const limitY = visualCardHeight * 0.5;
+
+    if (Math.abs(mouseX - screenCenterX) > limitX) return;
+    if (Math.abs(mouseY - screenCenterY) > limitY) return;
 
     // 2. CALCULAR QUÉ ITEM ES
     const width = this.medias[0].width;
@@ -485,10 +483,10 @@ class App {
     window.addEventListener('resize', this.boundOnResize);
     // window.addEventListener('mousewheel', this.boundOnWheel);
     // window.addEventListener('wheel', this.boundOnWheel);
-    window.addEventListener('mousedown', this.boundOnTouchDown);
+    this.container.addEventListener('mousedown', this.boundOnTouchDown);
+    this.container.addEventListener('touchstart', this.boundOnTouchDown);
     window.addEventListener('mousemove', this.boundOnTouchMove);
     window.addEventListener('mouseup', this.boundOnTouchUp);
-    window.addEventListener('touchstart', this.boundOnTouchDown);
     window.addEventListener('touchmove', this.boundOnTouchMove);
     window.addEventListener('touchend', this.boundOnTouchUp);
   }
@@ -497,13 +495,15 @@ class App {
     window.removeEventListener('resize', this.boundOnResize);
     // window.removeEventListener('mousewheel', this.boundOnWheel);
     // window.removeEventListener('wheel', this.boundOnWheel);
-    window.removeEventListener('mousedown', this.boundOnTouchDown);
+    if (this.container) {
+      this.container.removeEventListener('mousedown', this.boundOnTouchDown);
+      this.container.removeEventListener('touchstart', this.boundOnTouchDown);
+    }
     window.removeEventListener('mousemove', this.boundOnTouchMove);
     window.removeEventListener('mouseup', this.boundOnTouchUp);
-    window.removeEventListener('touchstart', this.boundOnTouchDown);
     window.removeEventListener('touchmove', this.boundOnTouchMove);
     window.removeEventListener('touchend', this.boundOnTouchUp);
-    
+
     if (this.renderer && this.renderer.gl && this.renderer.gl.canvas.parentNode) {
       this.renderer.gl.canvas.parentNode.removeChild(this.renderer.gl.canvas);
     }

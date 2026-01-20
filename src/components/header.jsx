@@ -1,6 +1,8 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
+import Swal from 'sweetalert2';
+import { useAuth } from '../context/authContext';
 // use your own icon import if react-icons is not available
 import { GoArrowUpRight } from 'react-icons/go';
 import '../compCSS/header.css';
@@ -16,6 +18,31 @@ const Header = ({
   buttonBgColor,
   buttonTextColor
 }) => {
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: '¿Cerrar sesión?',
+      text: '¿Estás seguro de que deseas cerrar sesión?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cerrar sesión',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6c757d'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logout();
+        Swal.fire({
+          title: 'Sesión cerrada',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        });
+      }
+    });
+  };
+
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const navRef = useRef(null);
@@ -155,13 +182,24 @@ const Header = ({
             <img src={logo} alt={logoAlt} className="logo" />
           </div>
 
-          <Link
-            to="/auth"
-            className="card-nav-cta-button"
-            style={{ backgroundColor: buttonBgColor, color: buttonTextColor, textDecoration: 'none' }}
-          >
-            Log In
-          </Link>
+          {user ? (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="card-nav-cta-button"
+              style={{ backgroundColor: buttonBgColor, color: buttonTextColor, border: 'none', cursor: 'pointer' }}
+            >
+              Log Out
+            </button>
+          ) : (
+            <Link
+              to="/auth"
+              className="card-nav-cta-button"
+              style={{ backgroundColor: buttonBgColor, color: buttonTextColor, textDecoration: 'none' }}
+            >
+              Log In
+            </Link>
+          )}
         </div>
 
         <div className="card-nav-content" aria-hidden={!isExpanded}>
