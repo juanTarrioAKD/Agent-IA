@@ -1,0 +1,34 @@
+.search-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .search-container:focus-within {
+    border-color: #4F46E5; /* Tu color primario */
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+  }
+  
+  .search-icon {
+    width: 20px;
+    height: 20px;
+    color: #9ca3af;
+    margin-right: 10px;
+  }
+  
+  .search-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 16px;
+    color: #374151;
+  }

@@ -7,10 +7,41 @@ import { useAuth } from '../context/authContext';
 import { GoArrowUpRight } from 'react-icons/go';
 import '../compCSS/header.css';
 
+const navItems = [
+  {
+    label: "Books",
+    bgColor: "#7A2B18", // Color oscuro parecido a la foto
+    textColor: "#ffffff",
+    links: [
+      { label: "Organize", href: "/books" },
+      { label: "Reviews", href: "/careers" },
+    ],
+  },
+  {
+    label: "Posts",
+    bgColor: "#78473B",
+    textColor: "#ffffff",
+    links: [
+      { label: "Organize", href: "/featured" },
+      { label: "View All Posts", href: "/case-studies" },
+    ],
+  },
+  {
+    label: "Admin",
+    bgColor: "#705C58",
+    textColor: "#ffffff",
+    links: [
+      { label: "Email", href: "mailto:hello@example.com" },
+      { label: "Twitter", href: "https://twitter.com" },
+      { label: "LinkedIn", href: "https://linkedin.com" },
+    ],
+  },
+];
+
 const Header = ({
   logo,
   logoAlt = 'Logo',
-  items,
+  items = navItems,
   className = '',
   ease = 'power3.out',
   baseColor = '#fff',
@@ -213,7 +244,13 @@ const Header = ({
               <div className="nav-card-label">{item.label}</div>
               <div className="nav-card-links">
                 {item.links?.map((lnk, i) => (
-                  <a key={`${lnk.label}-${i}`} className="nav-card-link" href={lnk.href} aria-label={lnk.ariaLabel}>
+                  <a
+                    key={`${lnk.label}-${i}`}
+                    className="nav-card-link"
+                    href={lnk.href}
+                    aria-label={lnk.ariaLabel}
+                    style={{ color: '#FFE8E3' }}
+                  >
                     <GoArrowUpRight className="nav-card-link-icon" aria-hidden="true" />
                     {lnk.label}
                   </a>

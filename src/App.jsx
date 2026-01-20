@@ -3,11 +3,12 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Importa tus páginas
-import Home from './pages/home';         
+import Home from './pages/home';
 import AboutPage from './pages/AboutPage';
 import AuthPage from './pages/AuthPage';
 import PostDetail from './pages/post_detail';
 import Store from './pages/Store';
+import BooksPage from './pages/BookPage';
 
 function App() {
   return (
@@ -25,7 +26,10 @@ function App() {
         {/* RUTA 4: Auth (Login/Registro) */}
         <Route path="/auth" element={<AuthPage />} />
 
-        {/* RUTA 5: El detalle (La Tilted Card) */}
+        {/* RUTA 5: Books Page */}
+        <Route path="/books" element={<BooksPage />} />
+
+        {/* RUTA 6: El detalle (La Tilted Card) */}
         {/* :id es un comodín, aceptará cualquier número */}
         <Route path="/post/:id" element={<PostDetail />} />
       </Routes>
