@@ -1,7 +1,12 @@
 export const validateSchema = (schema) => (req, res, next) => {
     try {
-      // Intenta parsear el body contra el esquema de Zod
-      schema.parse(req.body);
+      // 1. Validamos Y TRANSFORMAMOS los datos
+      // Zod toma los strings de FormData y los convierte a números aquí (gracias a z.coerce)
+      const dataParseada = schema.parse(req.body);
+
+      // 2. ¡IMPORTANTE! Reemplazamos el body sucio (strings) con el limpio (números transformados)
+      req.body = dataParseada;
+
       next(); // Si todo está bien, pasa al siguiente paso (el controlador)
     } catch (error) {
       // Zod usa `issues`, no `errors`. Si no hay issues (p. ej. error no-Zod), mensaje genérico.

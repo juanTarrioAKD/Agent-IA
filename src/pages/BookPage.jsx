@@ -120,7 +120,7 @@ const BooksPage = () => {
         </div>
 
         {gridItems.length > 0 ? (
-          <div style={{ height: '800px', position: 'relative', width: '100%' }}>
+          <div style={{ minHeight: '800px', position: 'relative', width: '100%', borderRadius: '20px', overflow: 'hidden', backgroundColor: '#111' }}>
             <ChromaGrid
               items={gridItems}
               radius={300}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import '../compCSS/CreateBookPage.css';
@@ -6,6 +6,8 @@ import '../compCSS/CreateBookPage.css';
 const CreateBookPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -18,6 +20,33 @@ const CreateBookPage = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      // Crear URL de preview
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+      // Limpiar la URL si se selecciona un archivo
+      setFormData((prev) => ({ ...prev, image: '' }));
+    } else {
+      setSelectedFile(null);
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+        setPreviewUrl(null);
+      }
+    }
+  };
+
+  // Limpiar el objeto URL cuando el componente se desmonte
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const getBaseUrl = () => {
     const raw = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -36,16 +65,27 @@ const CreateBookPage = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const payload = {
-        ...formData,
-        price: formData.price ? parseFloat(formData.price) : 0,
-        stock: formData.stock ? parseInt(formData.stock, 10) : 0,
-      };
+      // 1. Creamos el FormData (el "sobre")
+      const formDataToSend = new FormData();
 
+      // 2. Metemos los datos de texto
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('description', formData.description || '');
+      formDataToSend.append('price', formData.price ? parseFloat(formData.price) : 0);
+      formDataToSend.append('stock', formData.stock ? parseInt(formData.stock, 10) : 0);
+
+      // 3. Metemos el archivo SOLO si el usuario seleccionó uno
+      if (selectedFile) {
+        formDataToSend.append('image', selectedFile); // "image" debe coincidir con upload.single('image')
+      } else if (formData.image) {
+        // Si no hay archivo pero hay URL, la enviamos como campo de texto
+        formDataToSend.append('image', formData.image);
+      }
+
+      // 4. Enviamos el FormData (sin Content-Type, el navegador lo hace automático)
       const response = await fetch(`${getBaseUrl()}/api/libros`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: formDataToSend, // ¡OJO! NO agregamos 'Content-Type': 'application/json'
       });
 
       let data;
@@ -110,7 +150,32 @@ const CreateBookPage = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="image">URL de la Imagen (Portada)</label>
+            <label htmlFor="imageFile">Subir Imagen (Portada)</label>
+            <input
+              type="file"
+              id="imageFile"
+              name="imageFile"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+            {selectedFile && previewUrl && (
+              <div className="img-preview">
+                <img
+                  src={previewUrl}
+                  alt="Vista previa"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+                <p style={{ fontSize: '0.85rem', color: '#888', marginTop: '8px' }}>
+                  Archivo seleccionado: {selectedFile.name}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="image">O ingresa una URL de imagen</label>
             <input
               type="url"
               id="image"
@@ -118,11 +183,17 @@ const CreateBookPage = () => {
               placeholder="https://ejemplo.com/portada.jpg"
               value={formData.image}
               onChange={handleChange}
+              disabled={!!selectedFile}
             />
-            {formData.image && (
+            {formData.image && !selectedFile && (
               <div className="img-preview">
                 <img src={formData.image} alt="Vista previa" onError={(e) => { e.target.style.display = 'none'; }} />
               </div>
+            )}
+            {selectedFile && (
+              <p style={{ fontSize: '0.85rem', color: '#888', marginTop: '4px' }}>
+                (Desactiva el archivo seleccionado para usar URL)
+              </p>
             )}
           </div>
 
