@@ -1,6 +1,7 @@
 import cloudinary from '../config/cloudinary.js';
 import { createLibroService } from '../services/libroService.js';
 import { getLibrosService } from '../services/libroService.js';
+import { updateLibroService } from '../services/libroService.js';
 
 export const createLibro = async (req, res) => {
   try {
@@ -61,6 +62,33 @@ export const getLibros = async (req, res) => {
       success: false,
       message: 'Error al obtener los libros',
       error: error.message,
+    });
+  }
+};
+
+export const updateLibro = async (req, res) => {
+  try {
+    const { id } = req.params; // Viene de la URL /:id
+    const dataToUpdate = req.body; // Viene validado gracias al middleware
+
+    // Llamamos al servicio
+    const updatedLibro = await updateLibroService(id, dataToUpdate);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Libro actualizado correctamente',
+      data: updatedLibro
+    });
+
+  } catch (error) {
+    // Manejo específico si el libro no existe (Error de Prisma P2025)
+    if (error.message === 'Libro no encontrado') {
+      return res.status(404).json({ success: false, message: error.message });
+    }
+    return res.status(500).json({
+      success: false,
+      message: 'Error interno al actualizar el libro',
+      error: error.message
     });
   }
 };

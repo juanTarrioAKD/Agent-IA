@@ -9,7 +9,7 @@ export const loginUser = async ({ email, password }) => {
     include: { rol: true } // Traemos el rol para meterlo en el token si queremos
   });
 
-  if (!user) {
+  if (!user || user.deleted) {
     // TIP DE SEGURIDAD: Mensaje genérico para no decir "el email no existe"
     throw new Error('INVALID_CREDENTIALS');
   }

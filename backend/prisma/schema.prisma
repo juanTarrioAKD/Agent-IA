@@ -44,6 +44,8 @@ model User {
   password    String
   createdAt   DateTime  @default(now())
   rolId       Int
+  deleted     Boolean   @default(false)
+  lastUpdated DateTime  @updatedAt @default(now())
 
   // Relacion: 1 usuario tiene muchas publciaciones.
   posts       Post[]
@@ -59,6 +61,9 @@ model Post {
   libroId     Int
   createdAt   DateTime  @default(now())
   userId      Int
+  deleted     Boolean   @default(false)
+  visible     Boolean   @default(true)
+  lastUpdated DateTime  @updatedAt @default(now())
 
   // Relacion: 1 publicacion tiene 1 usuario.
   user        User      @relation(fields: [userId], references: [id])
@@ -74,6 +79,8 @@ model Libro {
   price       Float?
   stock       Int?
   createdAt   DateTime  @default(now())
+  deleted     Boolean   @default(false)
+  lastUpdated DateTime  @updatedAt @default(now())
 
   // Relacion inversa: un libro puede tener muchas publicaciones (requerido por Prisma)
   posts       Post[]

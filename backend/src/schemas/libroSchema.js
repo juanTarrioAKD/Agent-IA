@@ -21,4 +21,12 @@ export const createLibroSchema = z.object({
     (val) => (val === '' || val === null || val === undefined ? undefined : val),
     z.coerce.number().int("El stock debe ser un número entero").min(0).optional()
   ),
+
 });
+
+// Creamos el esquema de Update extendiendo el de Create
+export const updateLibroSchema = createLibroSchema
+  .partial() // 1. Hace que title, price, stock, etc. sean opcionales
+  .extend({  // 2. Agregamos campos nuevos que solo sirven para update
+    deleted: z.boolean().optional() 
+  });

@@ -3,6 +3,8 @@ import { createLibro, getLibros } from '../controllers/libroController.js';
 import { validateSchema } from '../middlewares/validateSchema.js';
 import { createLibroSchema } from '../schemas/libroSchema.js';
 import { upload } from '../middlewares/uploadMiddleware.js';
+import { updateLibro } from '../controllers/libroController.js';
+import { updateLibroSchema } from '../schemas/libroSchema.js';
 
 const router = Router();
 
@@ -15,6 +17,11 @@ router.post(
   createLibro                        // 3. Ejecuta (maneja Cloudinary si hay archivo)
 );
 
+// GET /api/libros - Obtener todos los libros
 router.get('/', getLibros);
+
+// PUT /api/libros/:id - Actualizar un libro
+// El middleware de upload debe ir ANTES de validateSchema para que req.file esté disponible
+router.put('/:id', validateSchema(updateLibroSchema), updateLibro);
 
 export default router;
