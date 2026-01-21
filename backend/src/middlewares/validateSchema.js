@@ -4,11 +4,16 @@ export const validateSchema = (schema) => (req, res, next) => {
       schema.parse(req.body);
       next(); // Si todo está bien, pasa al siguiente paso (el controlador)
     } catch (error) {
-      // Si falla, devuelve un 400 Bad Request con los errores formateados
+      // Zod usa `issues`, no `errors`. Si no hay issues (p. ej. error no-Zod), mensaje genérico.
+      const issues = error?.issues;
+      const errors = Array.isArray(issues)
+        ? issues.map((e) => ({ field: e.path?.[0] ?? "unknown", message: e.message }))
+        : [{ field: "body", message: error?.message ?? "Error de validación" }];
+
       return res.status(400).json({
         success: false,
         message: "Error de validación",
-        errors: error.errors.map((e) => ({ field: e.path[0], message: e.message }))
+        errors,
       });
     }
   };

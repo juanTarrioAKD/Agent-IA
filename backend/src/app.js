@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import libroRoutes from "./routes/libroRoutes.js";
 
 const app = express();
 
@@ -19,5 +20,8 @@ app.use("/api/v1/auth", authRoutes);
 
 // Rutas de usuarios: POST /api/v1/users (registro)
 app.use("/api/v1/users", userRoutes);
+
+// Rutas de libros: POST /api/libros
+app.use("/api/libros", libroRoutes);
 
 export default app;

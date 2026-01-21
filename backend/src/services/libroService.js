@@ -1,10 +1,8 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '../lib/prisma.js';
 
 export const createLibroService = async (data) => {
-  // 1. Verificar unicidad manualmente (Opcional pero recomendado para dar mejor feedback)
-  const existingBook = await prisma.libro.findUnique({
+  // 1. Verificar unicidad: findFirst acepta where por title (findUnique exige id en este cliente)
+  const existingBook = await prisma.libro.findFirst({
     where: { title: data.title },
   });
 
@@ -24,4 +22,15 @@ export const createLibroService = async (data) => {
   });
 
   return newLibro;
+};
+
+export const getLibrosService = async () => {
+  const libros = await prisma.libro.findMany({
+    orderBy: {
+      createdAt: 'desc', // Los más nuevos primero
+    },
+    // Si quisieras traer las relaciones, descomentas esto:
+    // include: { posts: true } 
+  });
+  return libros;
 };

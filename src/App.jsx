@@ -6,9 +6,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/home';
 import AboutPage from './pages/AboutPage';
 import AuthPage from './pages/AuthPage';
-import PostDetail from './pages/post_detail';
+import PostDetail from './pages/PostDetail';
 import Store from './pages/Store';
 import BooksPage from './pages/BookPage';
+import CreateBookPage from './pages/CreateBookPage';
 
 function App() {
   return (
@@ -32,6 +33,9 @@ function App() {
         {/* RUTA 6: El detalle (La Tilted Card) */}
         {/* :id es un comodín, aceptará cualquier número */}
         <Route path="/post/:id" element={<PostDetail />} />
+
+        {/* RUTA 7: Create Book Page */}
+        <Route path="/create-book" element={<CreateBookPage />} />
       </Routes>
     </Router>
   );

@@ -1,0 +1,78 @@
+.uiverse-btn {
+    /* Estilos base (bg-neutral-800, text-gray-50, font-bold, etc.) */
+    position: relative;
+    width: 16rem; /* w-64 */
+    height: 4rem; /* h-16 */
+    background-color: #262626; /* neutral-800 */
+    color: #f9fafb; /* gray-50 */
+    border: 1px solid #e5e5e5; /* border-gray-200 aprox */
+    border-radius: 0.5rem; /* rounded-lg */
+    padding: 0.75rem; /* p-3 */
+    font-size: 1rem; /* text-base */
+    font-weight: 700; /* font-bold */
+    text-align: left;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.5s ease; /* duration-500 */
+    
+    /* Subrayado inicial */
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
+  }
+  
+  /* --- ESTADOS HOVER DEL BOTÓN --- */
+  .uiverse-btn:hover {
+    border-color: #fda4af; /* hover:border-rose-300 */
+    color: #fda4af; /* hover:text-rose-300 */
+    text-underline-offset: 4px; /* hover:underline-offset-4 */
+    text-decoration-thickness: 2px; /* hover:decoration-2 */
+  }
+  
+  /* --- PSEUDO-ELEMENTOS (Las manchas de color) --- */
+  
+  /* La mancha Violeta (before) */
+  .uiverse-btn::before {
+    content: '';
+    position: absolute;
+    top: 0.25rem; /* top-1 */
+    right: 0.25rem; /* right-1 */
+    width: 3rem; /* w-12 */
+    height: 3rem; /* h-12 */
+    background-color: #8b5cf6; /* bg-violet-500 */
+    border-radius: 9999px; /* rounded-full */
+    filter: blur(16px); /* blur-lg (aumentado un poco para suavizar) */
+    z-index: 1; /* z-10 */
+    transition: all 0.5s ease;
+  }
+  
+  /* La mancha Rosada (after) */
+  .uiverse-btn::after {
+    content: '';
+    position: absolute;
+    top: 0.75rem; /* top-3 */
+    right: 2rem; /* right-8 */
+    width: 5rem; /* w-20 */
+    height: 5rem; /* h-20 */
+    background-color: #fda4af; /* bg-rose-300 */
+    border-radius: 9999px;
+    filter: blur(16px); /* blur-lg */
+    z-index: 1;
+    transition: all 0.5s ease;
+  }
+  
+  /* --- ANIMACIONES AL HACER HOVER --- */
+  
+  /* Movimiento de la mancha Violeta */
+  .uiverse-btn:hover::before {
+    right: 3rem; /* right-12 */
+    bottom: -2rem; /* -bottom-8 (esto fuerza a bajar) */
+    top: auto; /* Necesario para que bottom funcione */
+    filter: blur(8px); /* hover:blur (menos borroso) */
+    box-shadow: 20px 20px 20px 30px #a21caf; /* Sombra fucsia intensa */
+  }
+  
+  /* Movimiento de la mancha Rosada */
+  .uiverse-btn:hover::after {
+    right: -2rem; /* -right-8 */
+  }

@@ -7,7 +7,8 @@ export const createLibroSchema = z.object({
   
   description: z.string().optional(),
   
-  image: z.string().url("La imagen debe ser una URL válida").optional(),
+  // Acepta URL válida, string vacío (sin imagen) o undefined
+  image: z.union([z.string().url("La imagen debe ser una URL válida"), z.literal("")]).optional(),
   
   // Usamos z.coerce.number() por si el dato viene como string desde un form-data
   price: z.coerce
