@@ -4,17 +4,13 @@ import CircularGallery from '../components/circular_galerry';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import BackgroundStore from '../components/background_store';
-import foto_deadPoetsSociety from '../assets/Dead_Poets_Society.jpg';
-import foto_prideAndPrejudice from '../assets/Pride_Prejudice.jpg';
-import foto_romeoAndJuliet from '../assets/Romeo_Juliet.jpg';
-import foto_theNotebook from '../assets/The_Notebook.jpg';
 
 
 const misPublicaciones = [
-  { id: 1, text: 'Dead Poets Society', image: foto_deadPoetsSociety },
-  { id: 2, text: 'Pride and Prejudice', image: foto_prideAndPrejudice },
-  { id: 3, text: 'Romeo and Juliet', image: foto_romeoAndJuliet },
-  { id: 4, text: 'The Notebook', image: foto_theNotebook },
+  { id: 1, text: 'Dead Poets Society', image: 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400' },
+  { id: 2, text: 'Pride and Prejudice', image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400' },
+  { id: 3, text: 'Romeo and Juliet', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400' },
+  { id: 4, text: 'The Notebook', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400' },
 ];
 
 

@@ -47,28 +47,11 @@ model User {
   deleted     Boolean   @default(false)
   lastUpdated DateTime  @updatedAt @default(now())
 
-  // Relacion: 1 usuario tiene muchas publciaciones.
-  posts       Post[]
+  // Relacion: 1 usuario tiene muchas reviews.
+  reviews     Review[]
 
   // Relacion: 1 usuario tiene 1 rol.
   rol         Rol       @relation(fields: [rolId], references: [id], name: "UserRol")
-}
-
-//APARTADO DE LAS PUBLICACIONES
-model Post {
-  id          Int       @id @default(autoincrement())
-  title       String
-  libroId     Int
-  createdAt   DateTime  @default(now())
-  userId      Int
-  deleted     Boolean   @default(false)
-  visible     Boolean   @default(true)
-  lastUpdated DateTime  @updatedAt @default(now())
-
-  // Relacion: 1 publicacion tiene 1 usuario.
-  user        User      @relation(fields: [userId], references: [id])
-  // Relacion: 1 publicacion tiene 1 libro.
-  libro       Libro     @relation(fields: [libroId], references: [id])
 }
 
 model Libro {
@@ -82,6 +65,23 @@ model Libro {
   deleted     Boolean   @default(false)
   lastUpdated DateTime  @updatedAt @default(now())
 
-  // Relacion inversa: un libro puede tener muchas publicaciones (requerido por Prisma)
-  posts       Post[]
+  // Relacion: 1 libro tiene muchas reviews.
+  reviews     Review[]
+
+}
+
+model Review {
+  id          Int       @id @default(autoincrement())
+  review      String
+  rating      Int?      // Calificación opcional (ej: 1-5 estrellas)
+  createdAt   DateTime  @default(now())
+  deleted     Boolean   @default(false)
+  lastUpdated DateTime  @updatedAt @default(now())
+  libroId     Int
+  userId      Int
+
+  // Relacion: 1 review tiene 1 libro.
+  libro       Libro     @relation(fields: [libroId], references: [id], onDelete: Cascade)
+  // Relacion: 1 review tiene 1 usuario.
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

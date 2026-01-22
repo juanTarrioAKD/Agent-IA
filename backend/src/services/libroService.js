@@ -45,7 +45,7 @@ export const getLibrosService = async () => {
       createdAt: 'desc', // Los más nuevos primero
     },
     // Si quisieras traer las relaciones, descomentas esto:
-    // include: { posts: true } 
+    // include: { reviews: true } 
   });
   return libros;
 };
