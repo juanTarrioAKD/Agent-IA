@@ -24,6 +24,11 @@ export const createLibro = async (req, res) => {
       imageUrl = req.body.image;
     }
 
+    // Debug: Ver qué está llegando al controlador
+    console.log('createLibro controller - req.body:', req.body);
+    console.log('createLibro controller - authorId:', req.body.authorId);
+    console.log('createLibro controller - authorName:', req.body.authorName);
+
     // 3. Crear el libro en la BD con la URL (de Cloudinary o la URL proporcionada)
     const newLibro = await createLibroService({
       ...req.body,

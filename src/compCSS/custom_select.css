@@ -11,7 +11,7 @@
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     user-select: none; /* Para que no se seleccione el texto al hacer click */
-    z-index: 1; /* Asegurar stacking context */
+    z-index: 1000 !important; /* Alto z-index para estar por encima del ChromaGrid */
     display: flex;
     align-items: center;
     min-height: 44px; /* Misma altura que search-container */

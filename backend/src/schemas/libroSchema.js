@@ -22,6 +22,25 @@ export const createLibroSchema = z.object({
     z.coerce.number().int("El stock debe ser un número entero").min(0).optional()
   ),
 
+  // LÓGICA DE AUTOR:
+  // authorId es opcional (porque puede que envíe nombre)
+  // Preprocesamos strings vacíos a undefined para que .optional() funcione correctamente
+  authorId: z.preprocess(
+    (val) => (val === '' || val === null || val === undefined ? undefined : val),
+    z.coerce.number().int().optional()
+  ),
+  // authorName es opcional (porque puede que envíe ID)
+  // Preprocesamos strings vacíos a undefined
+  authorName: z.preprocess(
+    (val) => (val === '' || val === null || val === undefined ? undefined : val),
+    z.string().min(2, "El nombre del autor es muy corto").optional()
+  ),
+  
+}).refine((data) => data.authorId || data.authorName, {
+  // VALIDACIÓN PERSONALIZADA:
+  // "Si no hay ID y tampoco hay Nombre, lanza error".
+  message: "Debes seleccionar un autor existente o escribir el nombre de uno nuevo.",
+  path: ["authorName"], // El error aparecerá en el campo nombre
 });
 
 // Creamos el esquema de Update extendiendo el de Create

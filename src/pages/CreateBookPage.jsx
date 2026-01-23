@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { CustomSelect } from '../components/custom_select';
 import '../compCSS/CreateBookPage.css';
 
 const CreateBookPage = () => {
@@ -8,6 +9,10 @@ const CreateBookPage = () => {
   const [loading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [authors, setAuthors] = useState([]);
+  const [selectedAuthorId, setSelectedAuthorId] = useState(null);
+  const [newAuthorName, setNewAuthorName] = useState('');
+  const [useNewAuthor, setUseNewAuthor] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -48,6 +53,25 @@ const CreateBookPage = () => {
     };
   }, [previewUrl]);
 
+  // Fetch de autores al cargar
+  useEffect(() => {
+    const fetchAuthors = async () => {
+      try {
+        const response = await fetch(`${getBaseUrl()}/api/authors`);
+        const result = await response.json();
+
+        if (!response.ok) throw new Error(result.error || 'Error al cargar autores');
+
+        setAuthors(result.data ?? []);
+      } catch (error) {
+        console.error('Error al cargar autores:', error);
+        // No mostramos error al usuario, solo en consola
+      }
+    };
+
+    fetchAuthors();
+  }, []);
+
   const getBaseUrl = () => {
     const raw = import.meta.env.VITE_API_URL || 'http://localhost:3000';
     return raw.replace(/\/api\/v1\/?$/, '') || raw;
@@ -74,7 +98,14 @@ const CreateBookPage = () => {
       formDataToSend.append('price', formData.price ? parseFloat(formData.price) : 0);
       formDataToSend.append('stock', formData.stock ? parseInt(formData.stock, 10) : 0);
 
-      // 3. Metemos el archivo SOLO si el usuario seleccionó uno
+      // 3. Agregar autor: si hay un autor seleccionado, enviamos authorId; si hay un nombre nuevo, enviamos authorName
+      if (useNewAuthor && newAuthorName.trim()) {
+        formDataToSend.append('authorName', newAuthorName.trim());
+      } else if (selectedAuthorId) {
+        formDataToSend.append('authorId', selectedAuthorId);
+      }
+
+      // 4. Metemos el archivo SOLO si el usuario seleccionó uno
       if (selectedFile) {
         formDataToSend.append('image', selectedFile); // "image" debe coincidir con upload.single('image')
       } else if (formData.image) {
@@ -82,7 +113,7 @@ const CreateBookPage = () => {
         formDataToSend.append('image', formData.image);
       }
 
-      // 4. Enviamos el FormData (sin Content-Type, el navegador lo hace automático)
+      // 5. Enviamos el FormData (sin Content-Type, el navegador lo hace automático)
       const response = await fetch(`${getBaseUrl()}/api/libros`, {
         method: 'POST',
         body: formDataToSend, // ¡OJO! NO agregamos 'Content-Type': 'application/json'
@@ -101,7 +132,7 @@ const CreateBookPage = () => {
           title: '¡Libro Creado!',
           text: `Se ha agregado "${data.data?.title}" a la colección.`,
           confirmButtonColor: '#10B981',
-        }).then(() => navigate('/store'));
+        }).then(() => navigate('/books'));
       } else {
         throw new Error(getErrorMessage(data, response.status));
       }
@@ -194,6 +225,96 @@ const CreateBookPage = () => {
               <p style={{ fontSize: '0.85rem', color: '#888', marginTop: '4px' }}>
                 (Desactiva el archivo seleccionado para usar URL)
               </p>
+            )}
+          </div>
+
+          <div className="form-group">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <label>Autor *</label>
+              {!useNewAuthor && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUseNewAuthor(true);
+                    setSelectedAuthorId(null);
+                  }}
+                  style={{
+                    padding: '6px 12px',
+                    fontSize: '14px',
+                    backgroundColor: 'transparent',
+                    border: '1px solid #4F46E5',
+                    borderRadius: '6px',
+                    color: '#4F46E5',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = '#4F46E5';
+                    e.target.style.color = '#fff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = 'transparent';
+                    e.target.style.color = '#4F46E5';
+                  }}
+                >
+                  + Add New Author
+                </button>
+              )}
+              {useNewAuthor && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUseNewAuthor(false);
+                    setNewAuthorName('');
+                  }}
+                  style={{
+                    padding: '6px 12px',
+                    fontSize: '14px',
+                    backgroundColor: 'transparent',
+                    border: '1px solid #6B7280',
+                    borderRadius: '6px',
+                    color: '#6B7280',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = '#6B7280';
+                    e.target.style.color = '#fff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = 'transparent';
+                    e.target.style.color = '#6B7280';
+                  }}
+                >
+                  ← Select Existing
+                </button>
+              )}
+            </div>
+
+            {!useNewAuthor ? (
+              <CustomSelect
+                options={authors.map(author => author.name)}
+                value={selectedAuthorId ? authors.find(a => a.id === selectedAuthorId)?.name || '' : ''}
+                onChange={(authorName) => {
+                  const author = authors.find(a => a.name === authorName);
+                  setSelectedAuthorId(author ? author.id : null);
+                }}
+                placeholder="Selecciona un autor"
+              />
+            ) : (
+              <input
+                type="text"
+                placeholder="Ej: Gabriel García Márquez"
+                value={newAuthorName}
+                onChange={(e) => setNewAuthorName(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                }}
+              />
             )}
           </div>
 

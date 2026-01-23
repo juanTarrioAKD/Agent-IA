@@ -25,9 +25,12 @@ const getBaseUrl = () => {
 const BooksPage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedAuthorId, setSelectedAuthorId] = useState(null);
   const [books, setBooks] = useState([]);
+  const [authors, setAuthors] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Fetch de libros
   useEffect(() => {
     const fetchBooks = async () => {
       try {
@@ -48,12 +51,34 @@ const BooksPage = () => {
     fetchBooks();
   }, []);
 
+  // Fetch de autores
+  useEffect(() => {
+    const fetchAuthors = async () => {
+      try {
+        const response = await fetch(`${getBaseUrl()}/api/authors`);
+        const result = await response.json();
+
+        if (!response.ok) throw new Error(result.error || 'Error al cargar autores');
+
+        setAuthors(result.data ?? []);
+      } catch (error) {
+        console.error('Error al cargar autores:', error);
+        // No mostramos error al usuario, solo en consola
+      }
+    };
+
+    fetchAuthors();
+  }, []);
+
   const gridItems = useMemo(() => {
     if (!books.length) return [];
 
-    const filtered = books.filter((book) =>
-      book.title?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Filtrado por título y autor
+    const filtered = books.filter((book) => {
+      const matchesTitle = book.title?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesAuthor = !selectedAuthorId || book.authorId === selectedAuthorId;
+      return matchesTitle && matchesAuthor;
+    });
 
     return filtered.map((book) => {
       const style = getGenreColor();
@@ -67,7 +92,7 @@ const BooksPage = () => {
         url: `/book/${book.id}`,
       };
     });
-  }, [searchTerm, books]);
+  }, [searchTerm, selectedAuthorId, books]);
 
   const calculatedRows = Math.ceil(gridItems.length / 3) || 2;
 
@@ -172,12 +197,23 @@ const BooksPage = () => {
                 onSearch={setSearchTerm}
               />
             </div>
-            <div style={{ width: '250px', flexShrink: 0, marginLeft: '-12px' }}>
+            <div style={{ width: '250px', flexShrink: 0, marginLeft: '-12px', position: 'relative', zIndex: 1000 }}>
               <CustomSelect 
-                options={['Autor 1', 'Autor 2', 'Autor 3']}
-                value="Autor 1"
-                onChange={(value) => console.log(value)}
-                placeholder="Filtrar por categoria"
+                options={['All Authors', ...authors.map(author => author.name)]}
+                value={
+                  selectedAuthorId 
+                    ? (authors.find(a => a.id === selectedAuthorId)?.name || 'All Authors')
+                    : 'All Authors'
+                }
+                onChange={(selectedName) => {
+                  if (selectedName === 'All Authors') {
+                    setSelectedAuthorId(null);
+                  } else {
+                    const author = authors.find(a => a.name === selectedName);
+                    setSelectedAuthorId(author ? author.id : null);
+                  }
+                }}
+                placeholder="Filter by author"
               />
             </div>
           </div>

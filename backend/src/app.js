@@ -3,6 +3,7 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import libroRoutes from "./routes/libroRoutes.js";
+import authorRoutes from "./routes/authorRoutes.js";
 
 const app = express();
 
@@ -23,5 +24,8 @@ app.use("/api/v1/users", userRoutes);
 
 // Rutas de libros: POST /api/libros
 app.use("/api/libros", libroRoutes);
+
+// Rutas de autores: GET /api/authors, POST /api/authors
+app.use("/api/authors", authorRoutes);
 
 export default app;
