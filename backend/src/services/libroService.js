@@ -50,11 +50,13 @@ export const createLibroService = async (data) => {
     }
 
     // 3. Crear el libro usando la misma transacción 'tx'
+    // Usamos 'connect' para vincular el autor: más explícito y evita que quede null silenciosamente
     const newLibro = await tx.libro.create({
       data: {
         ...libroData,
-        authorId: finalAuthorId, // Puede ser undefined si no se proporcionó autor
-        // Si authorId es undefined, Prisma lo ignorará (ya que es opcional en el schema)
+        author: finalAuthorId
+          ? { connect: { id: finalAuthorId } }
+          : undefined,
       },
       include: {
         author: true, // Incluimos el autor en la respuesta

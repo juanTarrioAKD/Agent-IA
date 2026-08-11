@@ -10,6 +10,7 @@ import PostDetail from './pages/PostDetail';
 import Store from './pages/Store';
 import BooksPage from './pages/BookPage';
 import CreateBookPage from './pages/CreateBookPage';
+import HorariosPage from './pages/HorariosPage';
 
 function App() {
   return (
@@ -36,6 +37,9 @@ function App() {
 
         {/* RUTA 7: Create Book Page */}
         <Route path="/create-book" element={<CreateBookPage />} />
+
+        {/* RUTA 8: Horarios (Agenda semanal personal) */}
+        <Route path="/horarios" element={<HorariosPage />} />
       </Routes>
     </Router>
   );

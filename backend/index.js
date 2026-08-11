@@ -1,8 +1,6 @@
 import "dotenv/config";
-import { PrismaClient } from "./src/generated/prisma/client.js";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
 import app from "./src/app.js";
+import prisma from "./src/lib/prisma.js";
 
 // Verificar que DATABASE_URL esté cargada
 if (!process.env.DATABASE_URL) {
@@ -11,12 +9,6 @@ if (!process.env.DATABASE_URL) {
 }
 
 console.log("✅ DATABASE_URL cargada:", process.env.DATABASE_URL ? "Sí (oculta por seguridad)" : "No");
-
-// En Prisma 7.2, usar adapter de pg para conexión directa
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new PrismaPg(pool);
-
-const prisma = new PrismaClient({ adapter });
 
 const PORT = process.env.PORT || 3000;
 

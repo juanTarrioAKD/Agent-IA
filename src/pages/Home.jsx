@@ -11,7 +11,7 @@ let n8nChatInitialized = false;
 
 const demoItems = [
   { link: '/books', text: 'Our Library', image: fotoStore },
-  { link: '#', text: 'Proximamente!', image: 'https://picsum.photos/600/400?random=2' },
+  { link: '/horarios', text: 'Horarios', image: 'https://picsum.photos/600/400?random=2' },
   { link: '#', text: 'Proximamente!', image: 'https://picsum.photos/600/400?random=3' },
   { link: '/about', text: 'About Page', image: 'https://picsum.photos/600/400?random=4' }
 ];

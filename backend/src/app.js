@@ -4,6 +4,7 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import libroRoutes from "./routes/libroRoutes.js";
 import authorRoutes from "./routes/authorRoutes.js";
+import errorHandler from "./middlewares/errorHandler.js";
 
 const app = express();
 
@@ -27,5 +28,9 @@ app.use("/api/libros", libroRoutes);
 
 // Rutas de autores: GET /api/authors, POST /api/authors
 app.use("/api/authors", authorRoutes);
+
+// Manejador de errores global: SIEMPRE al final, después de todas las rutas.
+// Captura lo que los controladores pasan con next(error) y devuelve JSON con `message`.
+app.use(errorHandler);
 
 export default app;

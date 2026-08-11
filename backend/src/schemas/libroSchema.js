@@ -43,9 +43,26 @@ export const createLibroSchema = z.object({
   path: ["authorName"], // El error aparecerá en el campo nombre
 });
 
-// Creamos el esquema de Update extendiendo el de Create
-export const updateLibroSchema = createLibroSchema
-  .partial() // 1. Hace que title, price, stock, etc. sean opcionales
-  .extend({  // 2. Agregamos campos nuevos que solo sirven para update
-    deleted: z.boolean().optional() 
-  });
+// Esquema para Update: todos los campos opcionales, sin refinamiento de autor obligatorio
+export const updateLibroSchema = z.object({
+  title: z.string().min(3, "El título debe tener al menos 3 caracteres").optional(),
+  description: z.string().optional(),
+  image: z.union([z.string().url("La imagen debe ser una URL válida"), z.literal("")]).optional(),
+  price: z.preprocess(
+    (val) => (val === '' || val === null || val === undefined ? undefined : val),
+    z.coerce.number().min(0, "El precio no puede ser negativo").optional()
+  ),
+  stock: z.preprocess(
+    (val) => (val === '' || val === null || val === undefined ? undefined : val),
+    z.coerce.number().int("El stock debe ser un número entero").min(0).optional()
+  ),
+  authorId: z.preprocess(
+    (val) => (val === '' || val === null || val === undefined ? undefined : val),
+    z.coerce.number().int().optional()
+  ),
+  authorName: z.preprocess(
+    (val) => (val === '' || val === null || val === undefined ? undefined : val),
+    z.string().min(2, "El nombre del autor es muy corto").optional()
+  ),
+  deleted: z.boolean().optional()
+});
